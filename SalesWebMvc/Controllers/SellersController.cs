@@ -13,13 +13,11 @@ namespace SalesWebMvc.Controllers
 
         private readonly SellerService _sellerService;
         private readonly DepartmentService _departmentService;
-        private readonly ILogger<SellersController> _logger;
 
-        public SellersController(SellerService sellerService, DepartmentService departmentService, ILogger<SellersController> logger)
+        public SellersController(SellerService sellerService, DepartmentService departmentService)
         {
             _sellerService = sellerService;
             _departmentService = departmentService;
-            _logger = logger;
         }
         public async Task<IActionResult> Index()
         {
@@ -39,11 +37,12 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Seller seller)
         {
-            //if (!ModelState.IsValid) {
-            //    List<Department> departmens = await _departmentService.FindAllAsync();
-            //    SellerFormViewModel viewModel = new SellerFormViewModel { Seller = seller, Departments = departmens };
-            //    return View(viewModel);
-            //}
+            if (!ModelState.IsValid)
+            {
+                List<Department> departmens = await _departmentService.FindAllAsync();
+                SellerFormViewModel viewModel = new SellerFormViewModel { Seller = seller, Departments = departmens };
+                return View(viewModel);
+            }
             await _sellerService.InsertAsync(seller);
             return RedirectToAction(nameof(Index));
         }
@@ -116,12 +115,6 @@ namespace SalesWebMvc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var errors = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var error in errors)
-                {
-                    _logger.LogInformation(error.ErrorMessage); // ou use ILogger
-                }
-
                 List<Department> departmens = await _departmentService.FindAllAsync();
                 SellerFormViewModel viewModel = new SellerFormViewModel { Seller = seller, Departments = departmens };
                 return View(viewModel);
