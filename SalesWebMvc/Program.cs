@@ -11,11 +11,7 @@ builder.Services.AddDbContext<SalesWebMvcContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
-
-builder.Services.AddScoped<SeedingService>();
-builder.Services.AddScoped<SellerService>();
-builder.Services.AddScoped<DepartmentService>();
+AddServices(builder);
 
 var app = builder.Build();
 
@@ -59,3 +55,13 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+void AddServices(WebApplicationBuilder builder)
+{
+    builder.Services.AddControllersWithViews();
+
+    builder.Services.AddScoped<SeedingService>();
+    builder.Services.AddScoped<SellerService>();
+    builder.Services.AddScoped<DepartmentService>();
+    builder.Services.AddScoped<SalesRecordService>();
+}
